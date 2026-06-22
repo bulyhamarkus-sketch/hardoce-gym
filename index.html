@@ -695,50 +695,47 @@
 
   <script>
     async function sendToTelegram() {
-      const BOT_TOKEN = '8018070263:AAEGcluSJQTlrWl99ckYzgOTy4sNc3v1TgI';
-      const CHAT_ID = '5693885141';
+  const WORKER_URL = 'https://empty-snowflake-59d1.bulyha-markus.workers.dev';
 
-      const name = document.getElementById('f-name').value.trim();
-      const phone = document.getElementById('f-phone').value.trim();
-      const goal = document.getElementById('f-goal').value;
-      const btn = document.getElementById('f-btn');
-      const msg = document.getElementById('f-msg');
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const goal = document.getElementById('f-goal').value;
+  const btn = document.getElementById('f-btn');
+  const msg = document.getElementById('f-msg');
 
-      if (!name || !phone) {
-        msg.textContent = 'Будь ласка, заповни всі поля';
-        msg.className = 'form-msg error';
-        return;
-      }
+  if (!name || !phone) {
+    msg.textContent = 'Будь ласка, заповни всі поля';
+    msg.className = 'form-msg error';
+    return;
+  }
 
-      btn.disabled = true;
-      btn.textContent = 'Надсилаємо...';
-      msg.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо...';
+  msg.textContent = '';
 
-      const text = `🏋️ Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Цікавить: ${goal}`;
-
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'HTML' })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          msg.textContent = '✅ Заявку надіслано! Чекай на дзвінок.';
-          msg.className = 'form-msg success';
-          document.getElementById('f-name').value = '';
-          document.getElementById('f-phone').value = '';
-          btn.textContent = 'Надіслано!';
-        } else {
-          throw new Error(data.description);
-        }
-      } catch (e) {
-        msg.textContent = '❌ Помилка. Перевір токен бота.';
-        msg.className = 'form-msg error';
-        btn.disabled = false;
-        btn.textContent = 'Записатись безкоштовно';
-      }
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, goal })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      msg.textContent = '✅ Заявку надіслано! Чекай на дзвінок.';
+      msg.className = 'form-msg success';
+      document.getElementById('f-name').value = '';
+      document.getElementById('f-phone').value = '';
+      btn.textContent = 'Надіслано!';
+    } else {
+      throw new Error('error');
     }
+  } catch (e) {
+    msg.textContent = '❌ Помилка. Спробуй ще раз.';
+    msg.className = 'form-msg error';
+    btn.disabled = false;
+    btn.textContent = 'Записатись безкоштовно';
+  }
+}
   </script>
 
 
